@@ -117,13 +117,7 @@ const sound = function(reset) {
   reset();
 }
 
-document.getElementById('button').onclick = function changeContent() {
-  // 以下の関数を実行する
-  startTimer();
-  document.getElementById('button').innerHTML = "実行中";
-  document.getElementById('button').disabled = "disabled";
-  setTimeout(sound, timeLeft * 1000, reset);
-}
+
 
 document.getElementById("app").innerHTML = `
 <div class="base-timer">
@@ -150,7 +144,20 @@ document.getElementById("app").innerHTML = `
     <!-- 以下の関数の結果を表示する -->
     ${formatTimeLeft(timeLeft)}
   </span>
+  <div id="button-wrapper" class="button-wrapper">
+    <button id="button" name="start">
+      スタート
+    </button>
+  </div>
 </div>
 `;
+
+document.getElementById('button').onclick = function changeContent() {
+  // 以下の関数を実行する
+  startTimer();
+  document.getElementById('button').innerHTML = "実行中";
+  document.getElementById('button').disabled = "disabled";
+  setTimeout(sound, timeLeft * 1000, reset);
+}
 
 

@@ -78,3 +78,14 @@ body {
 .base-timer__path-remaining.red {
   color: red;
 }
+
+.button-wrapper {
+  position: absolute;
+  height: 100px;
+  width: 300px;
+  top: 170px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: purple;
+}
