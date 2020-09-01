@@ -1,0 +1,80 @@
+body {
+  font-family: sans-serif;
+  /* ビューポート(画面幅)高さ100% */
+  height: 100vh;
+  /* display: grid; */
+  /* place-items: center; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* SVGが入っている div のサイズを指定 */
+.base-timer {
+  position: relative;
+  height: 300px;
+  width: 300px;
+  background-color: blue;
+}
+
+/* 共通設定 */
+.base-timer__circle {
+  fill: none;
+  /* 図形要素の外側の色 */
+  stroke: none;
+}
+
+/* 個別設定 */
+.base-timer__path-elapsed {
+  fill: pink;
+  /* 図形要素の外側の色 */
+  stroke: gray;
+  stroke-width: 7px;
+}
+
+/* リング内に値を表示 */
+.base-timer__label {
+  /* 親ボックスの左上端が基準の絶対配置 */
+  position: absolute;
+  /* 親ボックス base-timer と同じサイズのボックスにする */
+  width: 300px;
+  height: 300px;
+  top: 0;
+  /* 要素の配置方法をフレキシブルボックスレイアウト(ブロックレベル)に指定 */
+  display: flex;
+  /* 主軸方向の揃え位置 */
+  justify-content: center;
+  /* クロス軸方向の揃え位置 */
+  align-items: center;
+  font-size: 48px;
+}
+
+.base-timer__path-remaining {
+  stroke-width: 7px;
+  /* 線を引いた時の終端の形状:円形 */
+  stroke-linecap: round;
+  /* 時計回りに90度回転 */
+  transform: rotate(90deg);
+  /* 変形する要素の中心位置 */
+  transform-origin: center;
+  /* 1秒ごとに一定の度合いで変化する */
+  transition: 1s linear all;
+  stroke: currentColor;
+}
+
+.base-timer__svg {
+  /* x軸方向の拡大縮小 負の値の時は裏返る */
+  transform: scaleX(-1);
+}
+
+.base-timer__path-remaining.green {
+  color: rgb(51, 151, 106);
+}
+
+.base-timer__path-remaining.orange {
+  color: orange;
+}
+
+.base-timer__path-remaining.red {
+  color: red;
+}
