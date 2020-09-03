@@ -27,12 +27,10 @@ function startTimer() {
   timeInterval = setInterval(() => {
     timePassed = timePassed += 1;
     timeLeft = TIME_LIMIT - timePassed;
-    // 右辺の関数の結果を左辺のinnerHTMLに代入する  <-- これを書く理由が不明(コメントアウトすると数字が変化しなかった)
+    // 1秒ごとに実行される右辺の関数の結果を左辺のinnerHTMLに代入する  <-- これを書く理由が不明(コメントアウトすると数字が変化しなかった)
     document.getElementById("base-timer-label").innerHTML = formatTimeLeft(timeLeft);
-
     setCircleDasharray();
     setRemainingPathColor(timeLeft);
-
     if (timeLeft <= 0) {
       // タイマー解除
       clearInterval(timeInterval);
@@ -40,23 +38,28 @@ function startTimer() {
   }, 1000);
 }
 
-// 初期時間の残りの割合を計算する、カウントダウン中にリングの長さを徐々に短くする？
+// calculate:計算 fraction:分数
+// 残り時間を元にした割合を計算する (円弧の長さの計算に使用する)
 function calculateTimeFraction() {
+  // 初期時間の残りの割合を計算
   const rawTimeFraction = timeLeft / TIME_LIMIT;
+  // カウントダウン中にリングの長さを徐々に短くする (アニメーションの帳尻合わせをするため)
   return rawTimeFraction - (1 / TIME_LIMIT) * (1 - rawTimeFraction);
 }
 
+// 円弧の長さ
+const FULL_DASH_ARRAY = 283;
+
 // 残り時間の更新
 function setCircleDasharray() {
+  // dash-array="142 283" のような右辺の文字列を作る
   const setCircleDasharray = `${(
     calculateTimeFraction() * FULL_DASH_ARRAY
-  ).toFixed(0)} 283`;
+  ).toFixed(0)} 283`; 
   document
     .getElementById("base-timer-path-remaining")
     .setAttribute("stroke-dasharray", setCircleDasharray);
 }
-
-const FULL_DASH_ARRAY = 283;
 
 // 警告状態に変化するしきい値(秒)
 const WARNING_THRESHOLD = 10;
@@ -81,9 +84,10 @@ const COLOR_CODES = {
   }
 };
 
-// 残りの色
+// 残り時間の色の初期を緑色
 let remainingPathColor = COLOR_CODES.info.color;
 
+// 残り時間に応じた色の設定
 function setRemainingPathColor(timeLeft) {
   const { alert, warning, info} = COLOR_CODES;
 
@@ -101,22 +105,38 @@ function setRemainingPathColor(timeLeft) {
     document
       .getElementById("base-timer-path-remaining")
       .classList.add(warning.color);
+  } else {
+    document
+      .getElementById("base-timer-path-remaining")
+      .classList.remove(warning.color);
+    document
+      .getElementById("base-timer-path-remaining")
+      .classList.remove(alert.color);
+    document
+      .getElementById("base-timer-path-remaining")
+      .classList.add(info.color);
   }
 }
 
+// ボタンやリングの表示を初期状態に戻す
 const reset = function() {
   document.getElementById('button').innerHTML = "スタート";
-  document.getElementById('button').disabled = "null";
+  document.getElementById('button').disabled = null;
+  timePassed = 0;
+  timeLeft = TIME_LIMIT;
+  remainingPathColor = COLOR_CODES.info.color;
+  document.getElementById('base-timer-label').innerHTML = formatTimeLeft(timeLeft);
+  setRemainingPathColor(timeLeft);
 }
 
+// 音の設定
 const sound = function(reset) {
-  console.log("sound");
+  // console.log("sound");
   const audio = document.getElementById('sound');
   audio.currentTime = 0;
   audio.play();
   reset();
 }
-
 
 
 document.getElementById("app").innerHTML = `
@@ -152,11 +172,14 @@ document.getElementById("app").innerHTML = `
 </div>
 `;
 
+// ボタンをクリックした時に起きること
 document.getElementById('button').onclick = function changeContent() {
-  // 以下の関数を実行する
+  // 以下の関数を実行する (タイマー開始)
   startTimer();
   document.getElementById('button').innerHTML = "実行中";
+  // ボタンを無効化
   document.getElementById('button').disabled = "disabled";
+  // タイマー完了時にsound関数実行 引数としてresetを渡す
   setTimeout(sound, timeLeft * 1000, reset);
 }
 

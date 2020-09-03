@@ -57,7 +57,7 @@ body {
   transform: rotate(90deg);
   /* 変形する要素の中心位置 */
   transform-origin: center;
-  /* 1秒ごとに一定の度合いで変化する */
+  /* 1秒ごとに一定の度合いで変化する (ボタンクリックして１秒後からアニメーションは開始する) */
   transition: 1s linear all;
   stroke: currentColor;
 }
@@ -87,5 +87,5 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: purple;
+  /* background-color: purple; */
 }
