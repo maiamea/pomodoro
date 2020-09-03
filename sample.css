@@ -89,3 +89,9 @@ body {
   align-items: center;
   /* background-color: purple; */
 }
+
+.button {
+  border: none;
+  background-color: transparent;
+  font-size: 30px;
+}
