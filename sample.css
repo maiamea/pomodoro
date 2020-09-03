@@ -95,3 +95,8 @@ body {
   background-color: transparent;
   font-size: 50px;
 }
+
+.button:hover {
+  opacity: 0.5;
+  cursor: pointer;
+}
