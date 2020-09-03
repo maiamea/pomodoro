@@ -182,7 +182,11 @@ document.getElementById("app").innerHTML = `
 document.getElementById('button').onclick = function changeContent() {
   // 以下の関数を実行する (タイマー開始)
   startTimer();
-  document.getElementById('button').innerHTML = "実行中";
+  document.getElementById('button').innerHTML = `
+  <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pause" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path fill-rule="evenodd" d="M6 3.5a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5zm4 0a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5z"/>
+  </svg>
+  `;
   // ボタンを無効化
   document.getElementById('button').disabled = "disabled";
   // タイマー完了時にsound関数実行 引数としてresetを渡す
