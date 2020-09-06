@@ -198,7 +198,7 @@ document.getElementById("app").innerHTML = `
 `;
 
 // 再生ボタンをクリックした時に起きること
-document.getElementById('start-button').onclick = function changeContent() {
+function onclickStartButton() {
   // 以下の関数を実行する (タイマー開始)
   startTimer();
 
@@ -207,9 +207,13 @@ document.getElementById('start-button').onclick = function changeContent() {
   isPaused = false;
 }
 
+document.getElementById('start-button').onclick = onclickStartButton;
+
 // 一時停止ボタンをクリックした時に起きること
-document.getElementById('pause-button').onclick = function () {
+function onclickPauseButton() {
   document.getElementById('start-button').style.display = "inline-block";
   document.getElementById('pause-button').style.display = "none";
   isPaused = true;
 }
+
+document.getElementById('pause-button').onclick = onclickPauseButton;
