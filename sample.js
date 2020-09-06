@@ -1,11 +1,15 @@
 'use strict';
 
-// 制限時間(秒)
-const TIME_LIMIT = 5;
+// 制限時間の初期値(秒)
+const DEFAULT_TIME_LIMIT = 15;
+// 休憩時間(秒)
+const BREAK_TIME_LIMIT = 5;
+// 現在の制限時間
+let timeLimit = DEFAULT_TIME_LIMIT
 // 経過時間
 let timePassed = 0;
 // 残り時間
-let timeLeft = TIME_LIMIT;
+let timeLeft = timeLimit;
 // 時間間隔
 let timeInterval = null;
 // 一時停止フラグ
@@ -31,7 +35,7 @@ function reset() {
   // 一時停止ボタンを非表示
   document.getElementById('pause-button').style.display = "none";
   timePassed = 0;
-  timeLeft = TIME_LIMIT;
+  timeLeft = timeLimit;
   setCircleDasharray();
   remainingPathColor = COLOR_CODES.info.color;
   document.getElementById('base-timer-label').innerHTML = formatTimeLeft(timeLeft);
@@ -62,7 +66,7 @@ function startTimer() {
 
     // 1秒ごとに以下の処理をくり返す
     timePassed = timePassed += 1;
-    timeLeft = TIME_LIMIT - timePassed;
+    timeLeft = timeLimit - timePassed;
     // 1秒ごとに実行される右辺の関数の結果を左辺のinnerHTMLに代入する  <-- これを書く理由が不明(コメントアウトすると数字が変化しなかった)
     document.getElementById("base-timer-label").innerHTML = formatTimeLeft(timeLeft);
     setCircleDasharray();
@@ -71,6 +75,13 @@ function startTimer() {
       // タイマー解除
       clearInterval(timeInterval);
       timeInterval = null;
+      // 制限時間と休憩時間の切り替え
+      // if (timeLimit === DEFAULT_TIME_LIMIT) {
+      //   timeLimit = BREAK_TIME_LIMIT;
+      // } else {
+      //   timeLimit = DEFAULT_TIME_LIMIT;
+      // }
+      timeLimit = (timeLimit === DEFAULT_TIME_LIMIT) ? BREAK_TIME_LIMIT : DEFAULT_TIME_LIMIT;
       sound(reset);
     } 
   }, 1000);
@@ -80,9 +91,9 @@ function startTimer() {
 // 残り時間を元にした割合を計算する (円弧の長さの計算に使用する) calculate:計算 fraction:分数
 function calculateTimeFraction() {
   // 初期時間の残りの割合を計算
-  const rawTimeFraction = timeLeft / TIME_LIMIT;
+  const rawTimeFraction = timeLeft / timeLimit;
   // カウントダウン中にリングの長さを徐々に短くする (アニメーションの帳尻合わせをするため)
-  return rawTimeFraction - (1 / TIME_LIMIT) * (1 - rawTimeFraction);
+  return rawTimeFraction - (1 / timeLimit) * (1 - rawTimeFraction);
 }
 
 // 円弧の長さ
