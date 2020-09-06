@@ -90,13 +90,26 @@ body {
   /* background-color: purple; */
 }
 
-.button {
+.start-button {
+  border: none;
+  /* 透明 */
+  background-color: transparent;
+  font-size: 50px;
+}
+
+.start-button:hover {
+  opacity: 0.5;
+  cursor: pointer;
+  
+}
+
+.pause-button {
   border: none;
   background-color: transparent;
   font-size: 50px;
 }
 
-.button:hover {
+.pause-button:hover {
   opacity: 0.5;
   cursor: pointer;
 }

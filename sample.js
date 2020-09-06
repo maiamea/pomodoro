@@ -1,13 +1,15 @@
 'use strict';
 
 // 制限時間(秒)
-const TIME_LIMIT = 15;
+const TIME_LIMIT = 5;
 // 経過時間
 let timePassed = 0;
 // 残り時間
 let timeLeft = TIME_LIMIT;
 // 時間間隔
 let timeInterval = null;
+// 一時停止フラグ
+let isPaused = false;
 
 // Remaining time label (残り時間の設定)
 function formatTimeLeft(time) {
@@ -22,9 +24,43 @@ function formatTimeLeft(time) {
   return `${minutes}:${seconds}`;
 }
 
+// ボタンやリングの表示を初期状態に戻す
+function reset() {
+  // 再生ボタンを表示
+  document.getElementById('start-button').style.display = "inline-block";
+  // 一時停止ボタンを非表示
+  document.getElementById('pause-button').style.display = "none";
+  timePassed = 0;
+  timeLeft = TIME_LIMIT;
+  setCircleDasharray();
+  remainingPathColor = COLOR_CODES.info.color;
+  document.getElementById('base-timer-label').innerHTML = formatTimeLeft(timeLeft);
+  setRemainingPathColor(timeLeft);
+}
+
+// 音の設定
+function sound(callback) {
+  // console.log("sound");
+  const audio = document.getElementById('sound');
+  // 再生時間を0に戻す
+  audio.currentTime = 0;
+  audio.play();
+  callback();
+}
+
 // カウントダウン設定
 function startTimer() {
+  // timeIntervalに数字が入っていればstartTimer関数の実行を終了する
+  if (timeInterval !== null) {
+    return;
+  }
   timeInterval = setInterval(() => {
+    // 一時停止フラグがtrueの間はsetInterval関数のsound(reset)までの処理をスキップする
+    if (isPaused === true) {
+      return;
+    }
+
+    // 1秒ごとに以下の処理をくり返す
     timePassed = timePassed += 1;
     timeLeft = TIME_LIMIT - timePassed;
     // 1秒ごとに実行される右辺の関数の結果を左辺のinnerHTMLに代入する  <-- これを書く理由が不明(コメントアウトすると数字が変化しなかった)
@@ -34,12 +70,14 @@ function startTimer() {
     if (timeLeft <= 0) {
       // タイマー解除
       clearInterval(timeInterval);
+      timeInterval = null;
+      sound(reset);
     } 
   }, 1000);
+  // console.log('timeInterval', timeInterval);
 }
 
-// calculate:計算 fraction:分数
-// 残り時間を元にした割合を計算する (円弧の長さの計算に使用する)
+// 残り時間を元にした割合を計算する (円弧の長さの計算に使用する) calculate:計算 fraction:分数
 function calculateTimeFraction() {
   // 初期時間の残りの割合を計算
   const rawTimeFraction = timeLeft / TIME_LIMIT;
@@ -50,7 +88,7 @@ function calculateTimeFraction() {
 // 円弧の長さ
 const FULL_DASH_ARRAY = 283;
 
-// 残り時間の更新
+// 円弧の長さの更新
 function setCircleDasharray() {
   // dash-array="142 283" のような右辺の文字列を作る
   const setCircleDasharray = `${(
@@ -118,31 +156,6 @@ function setRemainingPathColor(timeLeft) {
   }
 }
 
-// ボタンやリングの表示を初期状態に戻す
-const reset = function() {
-  document.getElementById('button').innerHTML = `
-  <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-play" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    <path fill-rule="evenodd" d="M10.804 8L5 4.633v6.734L10.804 8zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692z"/>
-  </svg>
-  `;
-  document.getElementById('button').disabled = null;
-  timePassed = 0;
-  timeLeft = TIME_LIMIT;
-  remainingPathColor = COLOR_CODES.info.color;
-  document.getElementById('base-timer-label').innerHTML = formatTimeLeft(timeLeft);
-  setRemainingPathColor(timeLeft);
-}
-
-// 音の設定
-const sound = function(reset) {
-  // console.log("sound");
-  const audio = document.getElementById('sound');
-  audio.currentTime = 0;
-  audio.play();
-  reset();
-}
-
-
 document.getElementById("app").innerHTML = `
 <div class="base-timer">
   <!-- viewBox: SVG の描画領域 -->
@@ -169,28 +182,34 @@ document.getElementById("app").innerHTML = `
     ${formatTimeLeft(timeLeft)}
   </span>
   <div id="button-wrapper" class="button-wrapper">
-    <button id="button" class="button" name="start">
+    <button id="start-button" class="start-button" name="start">
       <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-play" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
         <path fill-rule="evenodd" d="M10.804 8L5 4.633v6.734L10.804 8zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692z"/>
       </svg>
     </button>
+
+    <button id="pause-button" class="pause-button" name="pause" style="display:none;">
+    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pause" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" d="M6 3.5a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5zm4 0a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5z"/>
+    </svg>
+  </button>
   </div>
 </div>
 `;
 
-// ボタンをクリックした時に起きること
-document.getElementById('button').onclick = function changeContent() {
+// 再生ボタンをクリックした時に起きること
+document.getElementById('start-button').onclick = function changeContent() {
   // 以下の関数を実行する (タイマー開始)
   startTimer();
-  document.getElementById('button').innerHTML = `
-  <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pause" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    <path fill-rule="evenodd" d="M6 3.5a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5zm4 0a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5z"/>
-  </svg>
-  `;
-  // ボタンを無効化
-  document.getElementById('button').disabled = "disabled";
-  // タイマー完了時にsound関数実行 引数としてresetを渡す
-  setTimeout(sound, timeLeft * 1000, reset);
+
+  document.getElementById('start-button').style.display = "none";
+  document.getElementById('pause-button').style.display = "inline-block";
+  isPaused = false;
 }
 
-
+// 一時停止ボタンをクリックした時に起きること
+document.getElementById('pause-button').onclick = function () {
+  document.getElementById('start-button').style.display = "inline-block";
+  document.getElementById('pause-button').style.display = "none";
+  isPaused = true;
+}
