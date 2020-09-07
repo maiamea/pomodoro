@@ -1,9 +1,9 @@
 'use strict';
 
 // 制限時間の初期値(秒)
-const DEFAULT_TIME_LIMIT = 15;
+const DEFAULT_TIME_LIMIT = 25 *60;
 // 休憩時間(秒)
-const BREAK_TIME_LIMIT = 5;
+const BREAK_TIME_LIMIT = 5 *60;
 // 現在の制限時間
 let timeLimit = DEFAULT_TIME_LIMIT
 // 経過時間
@@ -111,9 +111,9 @@ function setCircleDasharray() {
 }
 
 // 警告状態に変化するしきい値(秒)
-const WARNING_THRESHOLD = 10;
+const WARNING_THRESHOLD = 10 * 60;
 // アラート状態に変化するしきい値(秒)
-const ALERT_THRESHOLD = 5;
+const ALERT_THRESHOLD = 5 * 60;
 
 // リングの色の設定
 const COLOR_CODES = {
