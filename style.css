@@ -14,7 +14,7 @@ body {
   position: relative;
   height: 300px;
   width: 300px;
-  background-color: blue;
+  /* background-color: blue; */
 }
 
 /* 共通設定 */
@@ -26,7 +26,7 @@ body {
 
 /* 個別設定 */
 .base-timer__path-elapsed {
-  fill: pink;
+  /* fill: pink; */
   /* 図形要素の外側の色 */
   stroke: gray;
   stroke-width: 7px;
